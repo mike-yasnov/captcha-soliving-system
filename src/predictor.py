@@ -85,7 +85,7 @@ class Predictor:
         bboxes = [convert_yolov8_bbox_to_opencv(x, width, height) for x in prediction.boxes.xywhn]
         classes = prediction.boxes.cls
 
-        icons_bboxes, number = [], []
+        icons_bboxes, number = [], 1
 
         for (bbox, cls) in zip(bboxes, classes):
             _, y_center = self.__matcher.bbox_center(bbox)
@@ -127,7 +127,7 @@ class Predictor:
 
         icon_transformed = transformation_chain(Image.fromarray(icon)).unsqueeze(0)
         embeddings = extract_embeddings(captcha_icons_transformed)
-        
+
         image_id = fetch_similar(icon_transformed, embeddings, list(range(len(embeddings)))) 
         x1, x2 = x1 + 200 * image_id, x2 + 200 * image_id
         return [x1, y1, x2, y2], image_id
