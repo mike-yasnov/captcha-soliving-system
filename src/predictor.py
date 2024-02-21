@@ -111,28 +111,24 @@ class Predictor:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         image_for_prediction = image[:, :200, :]
-        captchas = [image[:200, i:i+200, :] for i in range(0, 1000, 200)]
 
+        captchas = [image[:200, i:i+200, :] for i in range(0, 1000, 200)]
         bboxes, number, icon = self.__detect(image_for_prediction)
+
         sun_x, sun_y = self.get_sun_center(captchas[0])
-        if sun_x < 100:
-            bbox = self.__matcher.match(self.circles["left"], bboxes)[number]
-        else:
-            bbox = self.__matcher.match(self.circles["right"], bboxes)[number]
+        circles = self.circles["left"] if sun_x < 100 else self.circles["right"]
+        bbox = self.__matcher.match(circles, bboxes)[number]
 
         x1, y1, x2, y2 = bbox
         captcha_icons = [x[y1:y2, x1:x2] for x in captchas]
-
         captcha_icons_transformed = [preprocess_image(captcha_icon) for captcha_icon in captcha_icons]
         captcha_icons_transformed = [transformation_chain(Image.fromarray(captcha_icon)).unsqueeze(0) for captcha_icon in captcha_icons_transformed]
         captcha_icons_transformed = torch.cat(captcha_icons_transformed, dim=0)
 
         icon_transformed = transformation_chain(Image.fromarray(icon)).unsqueeze(0)
-
-
         embeddings = extract_embeddings(captcha_icons_transformed)
+        
         image_id = fetch_similar(icon_transformed, embeddings, list(range(len(embeddings)))) 
-
         x1, x2 = x1 + 200 * image_id, x2 + 200 * image_id
-
         return [x1, y1, x2, y2], image_id
+
