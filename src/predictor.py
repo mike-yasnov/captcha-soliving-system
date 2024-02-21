@@ -54,6 +54,7 @@ class Predictor:
         # Нахождение контуров на изображении
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         threshold_area = 2000
+        center = (0, 0)
         # Итерация по всем найденным контурам
         for contour in contours:
             # Вычисление параметров контура
