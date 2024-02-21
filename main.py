@@ -28,7 +28,7 @@ def main(data_dir):
         labelme_data = json.load(open(json_path))
 
         point = labelme_data["shapes"][0]["points"][0]
-        true_answers += int(point_inside_bbox(bbox, point))
+        true_answers += int(point_inside_bbox(point, bbox))
 
     print(f"Accuracy: {true_answers/len(image_paths)}")
 
