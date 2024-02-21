@@ -4,7 +4,7 @@
 Создайте виртуальное окружение и установите зависимости 
 ```bash 
 python -m venv venv 
-pip install -r requirements
+pip install -r requirements.txt
 ```
 Для запуска кода
 ```
